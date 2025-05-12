@@ -13,71 +13,56 @@ package ini dibuat oleh kelompok 7, sebuah aplikasi _habit tracker_ berbasis Jav
 - ✅ Validasi input (y/n & angka) dengan sistem try-catch
 
 ---
-
-## 💡 Skema Index Skor
-
-- **Habit Positif**
-  - Skor bertambah secara progresif: +10, +15, +20, dst.
-- **Habit Negatif**
-  - Skor menurun secara progresif: -5, -15, -30, dst.
-
----
 ## Struktur Class
 
 ### Interface dan Abstract
 - **Trackable** (interface):
   - `markDone()`, `resetScore()`
 - **Habit** (abstract class):
-  - Attribute: `name`, `skor`
-  - Method: `getName()`, `getScore()`, `increaseScore()`, `decreaseScore()`, `resetScore()`, `markDone()` (abstract)
+  - Atribut: `name`, `jumlahDilakukan`
+  - Method: `getName()`, `getScore()` (abstract override), `getJumlahDilakukan()`, `resetScore()`, `markDone()` (abstract)
 
-### Implementasi
-- **PositiveHabit**: extends `Habit`, skor akan bertambah saat ditandai selesai
-- **NegativeHabit**: extends `Habit`, skor akan berkurang saat ditandai selesai
+### Implementasi Class
+- **PositiveHabit**: turunan `Habit`, skor meningkat progresif (10, 15, 20,...)
+- **NegativeHabit**: turunan `Habit`, skor menurun progresif (-5, -10, -15,...)
 - **HabitManajer**:
-  - Menyimpan list habit (`List<Trackable>`)
-  - Method: `addHabit()`, `resetScore()`, `markHabit()`, `removeHabit()`, `getHabits()`
+  - Menyimpan daftar kebiasaan (List<Trackable>)
+  - Method: `addHabit()`, `markHabit()`, `resetScore()`, `removeHabit()`, `isHabitExists()`, `getHabits()`, `getAllHabits()`, `getTotalScore()`
 - **HabitApp**:
-  - Versi CLI dari aplikasi, berbasis `Scanner`
+  - Versi CLI dengan input/output menggunakan `Scanner`
+  - Menu: tambah, lihat, tandai selesai, reset, dan hasil habit
 - **HabitHeroSwingGUI**:
-  - GUI Swing utama dengan daftar habit, tombol aksi, dan total skor
+  - Versi GUI Swing dengan list kebiasaan, detail info, dan tombol aksi
+  - Menyediakan feedback berdasarkan total skor
 
 ---
 
 ## Cara Menjalankan Program
 
-### Versi CLI
-1. Compile:
+### 1. Versi CLI (HabitApp)
 ```bash
 javac *.java
-```
-2. Jalankan:
-```bash
 java HabitApp
 ```
 
-### Versi GUI (Swing)
-1. Compile:
+### 2. Versi GUI Swing (HabitHeroSwingGUI)
 ```bash
 javac *.java
-```
-2. Jalankan:
-```bash
 java HabitHeroSwingGUI
 ```
 
-Tidak perlu module-path seperti JavaFX, cukup JDK biasa.
+Tidak membutuhkan JavaFX, cukup JDK standar (versi 8+).
 
 ---
 
 ## Pembagian Tugas Anggota
 
-| Nama Anggota                         | Tugas                                                                 |
-|--------------------------------------|-----------------------------------------------------------------------|
-| **Anugrah Fitri Novanda**            | Membuat `HabitApp.java` dan `HabitHeroSwingGUI.java` (GUI)            |
-| **Vina Sucitra**                     | Membuat class `Habit.java`                                            |
-| **Muhammad Alif Sakti**             | Membuat interface `Trackable`, class `PositiveHabit`, `NegativeHabit` |
-| **Andi Sophie Banuna Amrie**         | Membuat class `HabitManajer.java`                                     |
+| Nama Anggota                   | Tugas                                                                 |
+|-------------------------------|-----------------------------------------------------------------------|
+| **Anugrah Fitri Novanda**     | Membuat `HabitApp` dan `HabitHeroSwingGUI` (GUI Swing)                |
+| **Vina Sucitra**              | Membuat `Habit.java` (kelas abstrak)            |
+| **Muhammad Alif Sakti**       | Membuat `Trackable`, `PositiveHabit`, dan `NegativeHabit`             |
+| **Andi Sophie Banuna Amrie**  | Membuat `HabitManajer.java`    |
 
 ---
 

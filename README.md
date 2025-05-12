@@ -1,5 +1,5 @@
 # Habit-Hero
-package ini dibuat oleh kelompok 7, sebuah aplikasi _habit tracker_ berbasis Java yang membantu pengguna membentuk kebiasaan baik dan mengurangi kebiasaan buruk melalui sistem penilaian (index skor) yang sederhana namun efektif.
+package ini dibuat oleh kelompok 7, sebuah aplikasi _habit tracker_ berbasis Java yang membantu pengguna membentuk kebiasaan baik dan mengurangi kebiasaan buruk melalui sistem penilaian (index skor) yang sederhana namun efektif. Kami juga menambahkan GUI sederhana di dalam projek ini
 
 ---
 

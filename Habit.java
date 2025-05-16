@@ -19,8 +19,11 @@ public abstract class Habit implements Trackable {
         return jumlahDilakukan;
     }
 
-    public void resetScore() {
+    public void reset() {
         this.jumlahDilakukan = 0;
+    }
+    public String getDisplayName() {
+        return name + " (" + jumlahDilakukan + "x)";
     }
 
     public abstract void markDone();

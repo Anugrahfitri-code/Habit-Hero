@@ -1,196 +1,235 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
-import javax.swing.border.Border;
 
-public class HabitHeroSwingGUI {
+public class HabitHeroApp {
     private JFrame frame;
-    private DefaultListModel<Habit> habitListModel;
-    private JList<Habit> habitJList;
-    private HabitManajer manajer;
-    private JLabel totalScoreLabel;
-    private JButton showScoreButton;
-    private boolean scoreVisible = false;
+    private DefaultListModel<String> habitListModel;
+    private JList<String> habitList;
+    private List<Habit> habits;
+    private JLabel totalSkorLabel;
+    private JLabel feedbackLabel;
+    private JTextArea detailHabit;
+    private boolean skorVisible = true;
+    private String userName;
 
-    public HabitHeroSwingGUI() {
-        manajer = new HabitManajer();
-        frame = new JFrame("HabitHero - Swing Edition");
-        habitListModel = new DefaultListModel<>();
-        habitJList = new JList<>(habitListModel);
-        totalScoreLabel = new JLabel("Total Skor: ");
-        totalScoreLabel.setVisible(false);
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new HabitHeroApp().showWelcomeScreen());
+    }
 
-        habitJList.setCellRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Habit) {
-                    Habit h = (Habit) value;
-                    setText(h.getName() + " - Skor: " + h.getScore());
-                    if (h instanceof PositiveHabit) {
-                        setForeground(isSelected ? Color.WHITE : new Color(0, 128, 0));
-                    } else {
-                        setForeground(isSelected ? Color.WHITE : Color.RED.darker());
-                    }
-                }
-                return c;
-            }
-        });
+    private void showWelcomeScreen() {
+        JFrame welcomeFrame = new JFrame("Selamat Datang di HabitHero");
+        welcomeFrame.setSize(400, 200);
+        welcomeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        welcomeFrame.setLocationRelativeTo(null);
 
-        JPanel detailPanel = new JPanel();
-        detailPanel.setLayout(new GridLayout(3, 1));
-        JLabel nameDetail = new JLabel("Nama: -");
-        JLabel typeDetail = new JLabel("Tipe: -");
-        JLabel scoreDetail = new JLabel("Skor saat ini: -");
-        detailPanel.setBorder(BorderFactory.createTitledBorder("Detail Habit"));
-        detailPanel.add(nameDetail);
-        detailPanel.add(typeDetail);
-        detailPanel.add(scoreDetail);
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(179, 229, 252));
+        welcomeFrame.add(panel);
+        placeWelcomeComponents(panel, welcomeFrame);
 
-        JTextField inputField = new JTextField(15);
-        Border defaultBorder = inputField.getBorder();
+        welcomeFrame.setVisible(true);
+    }
 
-        habitJList.addListSelectionListener(e -> {
-            int index = habitJList.getSelectedIndex();
-            if (index >= 0) {
-                Habit h = habitListModel.get(index);
-                nameDetail.setText("Nama: " + h.getName());
-                typeDetail.setText("Tipe: " + (h instanceof PositiveHabit ? "Positif" : "Negatif"));
-                scoreDetail.setText("Skor saat ini: " + h.getScore());
+    private void placeWelcomeComponents(JPanel panel, JFrame welcomeFrame) {
+        panel.setLayout(null);
+
+        JLabel welcomeLabel = new JLabel("Masukkan Nama Anda:");
+        welcomeLabel.setBounds(50, 30, 300, 25);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        panel.add(welcomeLabel);
+
+        JTextField nameText = new JTextField(20);
+        nameText.setBounds(50, 60, 280, 25);
+        panel.add(nameText);
+
+        JButton startButton = new JButton("Mulai");
+        startButton.setBounds(150, 100, 100, 25);
+        panel.add(startButton);
+
+        startButton.addActionListener(e -> {
+            userName = nameText.getText().trim();
+            if (!userName.isEmpty()) {
+                welcomeFrame.dispose();
+                initializeUI();
             } else {
-                nameDetail.setText("Nama: -");
-                typeDetail.setText("Tipe: -");
-                scoreDetail.setText("Skor saat ini: -");
+                JOptionPane.showMessageDialog(panel, "Nama tidak boleh kosong.");
             }
         });
+    }
 
-        frame.add(detailPanel, BorderLayout.EAST);
+    private void initializeUI() {
+        frame = new JFrame("HabitHero – Swing Edition");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(900, 600);
 
-        JRadioButton positiveButton = new JRadioButton("Positif", true);
-        JRadioButton negativeButton = new JRadioButton("Negatif");
-        ButtonGroup group = new ButtonGroup();
-        group.add(positiveButton);
-        group.add(negativeButton);
+        habits = new ArrayList<>();
 
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(new Color(144, 202, 249));
+        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JTextField habitNameField = new JTextField(15);
+        JRadioButton positifBtn = new JRadioButton("Positif");
+        JRadioButton negatifBtn = new JRadioButton("Negatif");
         JButton addButton = new JButton("Tambah Habit");
-        JButton markButton = new JButton("Tandai Selesai");
-        JButton resetButton = new JButton("Reset Skor");
-        JButton deleteButton = new JButton("Hapus Habit");
-        showScoreButton = new JButton("Tampilkan Hasil Skor");
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(positifBtn);
+        group.add(negatifBtn);
+
+        topPanel.add(new JLabel("Nama Habit:"));
+        topPanel.add(habitNameField);
+        topPanel.add(positifBtn);
+        topPanel.add(negatifBtn);
+        topPanel.add(addButton);
+
+        JLabel greetingLabel = new JLabel("Selamat datang, " + userName + " di aplikasi HabitHero!");
+        greetingLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        greetingLabel.setForeground(new Color(13, 71, 161));
+        topPanel.add(greetingLabel);
+
+        JPanel skorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        skorPanel.setBackground(new Color(179, 229, 252));
+        totalSkorLabel = new JLabel("Total Skor: 0");
+        JButton toggleSkorBtn = new JButton("Sembunyikan Skor");
+
+        feedbackLabel = new JLabel("Pengguna diharapkan agar sering melakukan kegiatan positif.");
+        skorPanel.add(totalSkorLabel);
+        skorPanel.add(toggleSkorBtn);
+        skorPanel.add(feedbackLabel);
+
+        toggleSkorBtn.addActionListener(e -> {
+            skorVisible = !skorVisible;
+            totalSkorLabel.setVisible(skorVisible);
+            feedbackLabel.setVisible(skorVisible);
+            toggleSkorBtn.setText(skorVisible ? "Sembunyikan Skor" : "Tampilkan Skor");
+        });
+
+        habitListModel = new DefaultListModel<>();
+        habitList = new JList<>(habitListModel);
+        habitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane listScrollPane = new JScrollPane(habitList);
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(new Color(179, 229, 252));
+        centerPanel.add(listScrollPane, BorderLayout.CENTER);
+
+        JPanel mainCenterPanel = new JPanel(new BorderLayout());
+        mainCenterPanel.add(skorPanel, BorderLayout.NORTH);
+        mainCenterPanel.add(centerPanel, BorderLayout.CENTER);
+
+        detailHabit = new JTextArea(5, 20);
+        detailHabit.setEditable(false);
+        detailHabit.setBackground(new Color(225, 245, 254));
+
+        JPanel detailPanel = new JPanel(new BorderLayout());
+        detailPanel.setBackground(new Color(179, 229, 252));
+        detailPanel.add(new JLabel("Detail Habit"), BorderLayout.NORTH);
+        detailPanel.add(detailHabit, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(new Color(144, 202, 249));
+        JButton selesaiBtn = new JButton("Tandai Selesai");
+        JButton resetBtn = new JButton("Reset Skor");
+        JButton hapusBtn = new JButton("Hapus Habit");
+
+        bottomPanel.add(selesaiBtn);
+        bottomPanel.add(resetBtn);
+        bottomPanel.add(hapusBtn);
 
         addButton.addActionListener(e -> {
-            String nama = inputField.getText().trim();
-            if (nama.isEmpty() || manajer.isHabitExists(nama)) {
-                inputField.setBorder(BorderFactory.createLineBorder(Color.RED, 2));
-                inputField.setToolTipText(nama.isEmpty() ? "Nama habit tidak boleh kosong" : "Nama habit sudah ada");
-                JOptionPane.showMessageDialog(frame, "Nama habit kosong atau sudah ada.");
+            String nama = habitNameField.getText().trim();
+            if (nama.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Nama habit tidak boleh kosong!");
+                return;
+            }
+
+            Habit habit;
+            if (positifBtn.isSelected()) {
+                habit = new PositiveHabit(nama);
+            } else if (negatifBtn.isSelected()) {
+                habit = new NegativeHabit(nama);
             } else {
-                Habit habit = positiveButton.isSelected() ? new PositiveHabit(nama) : new NegativeHabit(nama);
-                manajer.addHabit(habit);
-                habitListModel.addElement(habit);
-                inputField.setText("");
-                inputField.setBorder(defaultBorder);
-                inputField.setToolTipText(null);
-                updateTotalScore();
-                hideScore(); 
+                JOptionPane.showMessageDialog(frame, "Pilih tipe habit terlebih dahulu!");
+                return;
+            }
+
+            habits.add(habit);
+            habitListModel.addElement(habit.getDisplayName());
+            habitNameField.setText("");
+        });
+
+        habitList.addListSelectionListener(e -> {
+            int index = habitList.getSelectedIndex();
+            if (index >= 0) {
+                Habit selected = habits.get(index);
+                detailHabit.setText("Nama: " + selected.getName() +
+                        "\nTipe: " + (selected instanceof PositiveHabit ? "Positif" : "Negatif") +
+                        "\nJumlah dilakukan: " + selected.getJumlahDilakukan() +
+                        "\nSkor saat ini: " + selected.getScore());
             }
         });
 
-        markButton.addActionListener(e -> {
-            int index = habitJList.getSelectedIndex();
+        selesaiBtn.addActionListener(e -> {
+            int index = habitList.getSelectedIndex();
             if (index >= 0) {
-                manajer.markHabit(index);
-                habitJList.repaint();
-                updateTotalScore();
-                hideScore();
+                Habit selected = habits.get(index);
+                selected.markDone();
+                habitListModel.set(index, selected.getDisplayName());
+                updateTotalSkor();
             }
         });
 
-        resetButton.addActionListener(e -> {
-            int index = habitJList.getSelectedIndex();
-            if (index >= 0) {
-                manajer.resetScore(index);
-                habitJList.repaint();
-                updateTotalScore();
-                hideScore();
+        resetBtn.addActionListener(e -> {
+            for (Habit h : habits) {
+                h.reset();
             }
+            refreshList();
+            updateTotalSkor();
         });
 
-        deleteButton.addActionListener(e -> {
-            int index = habitJList.getSelectedIndex();
+        hapusBtn.addActionListener(e -> {
+            int index = habitList.getSelectedIndex();
             if (index >= 0) {
-                manajer.removeHabit(index);
+                habits.remove(index);
                 habitListModel.remove(index);
-                updateTotalScore();
-                hideScore();
+                detailHabit.setText("");
+                updateTotalSkor();
             }
         });
 
-        showScoreButton.addActionListener(e -> {
-            scoreVisible = !scoreVisible;
-            totalScoreLabel.setVisible(scoreVisible);
-            showScoreButton.setText(scoreVisible ? "Sembunyikan Skor" : "Tampilkan Hasil Skor");
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(mainCenterPanel, BorderLayout.CENTER);
+        frame.add(detailPanel, BorderLayout.EAST);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
 
-            if (scoreVisible) {
-                updateTotalScore(); 
-            }
-        });
-
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
-        JPanel topRow = new JPanel();
-        topRow.add(new JLabel("Nama Habit:"));
-        topRow.add(inputField);
-        topRow.add(positiveButton);
-        topRow.add(negativeButton);
-        topRow.add(addButton);
-        inputPanel.add(topRow);
-        inputPanel.add(showScoreButton);
-        inputPanel.add(totalScoreLabel);
-
-        JPanel controlPanel = new JPanel();
-        controlPanel.add(markButton);
-        controlPanel.add(resetButton);
-        controlPanel.add(deleteButton);
-
-        frame.setLayout(new BorderLayout());
-        frame.add(inputPanel, BorderLayout.NORTH);
-        frame.add(new JScrollPane(habitJList), BorderLayout.CENTER);
-        frame.add(controlPanel, BorderLayout.SOUTH);
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
         frame.setVisible(true);
     }
 
-    private void updateTotalScore() {
+    private void updateTotalSkor() {
         int total = 0;
-        for (Habit h : manajer.getHabits()) {
+        for (Habit h : habits) {
             total += h.getScore();
         }
+        totalSkorLabel.setText("Total Skor: " + total);
 
-        totalScoreLabel.setText("Total Skor: " + total);
-
-        String feedbackMessage = "";
+        String feedbackMessage;
         if (total < 30) {
-            feedbackMessage = "Pengguna diharapkan agar sering melakukan kegiatan positif, hindari melakukan kebiasaan negatif terlalu sering.";
-        } else if (total <= 40) {
-            feedbackMessage = "Pengguna sudah lumayan melakukan kegiatan positif namun masih ada kebiasaan negatifnya yang perlu dikurangi.";
+            feedbackMessage = "Pengguna diharapkan agar sering melakukan kegiatan positif.";
+        } else if (total < 45) {
+            feedbackMessage = "Pengguna sudah lumayan melakukan kegiatan positif. Kurangi habit negatifnya.";
         } else {
             feedbackMessage = "Pengguna sudah konsisten melakukan kebiasaan baik.";
         }
+        feedbackLabel.setText(feedbackMessage);
+    }
 
-        if (scoreVisible) {
-            JOptionPane.showMessageDialog(frame, feedbackMessage);
+    private void refreshList() {
+        habitListModel.clear();
+        for (Habit h : habits) {
+            habitListModel.addElement(h.getDisplayName());
         }
-    }
-
-    private void hideScore() {
-        scoreVisible = false;
-        totalScoreLabel.setVisible(false);
-        showScoreButton.setText("Tampilkan Hasil Skor");
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(HabitHeroSwingGUI::new);
     }
 }

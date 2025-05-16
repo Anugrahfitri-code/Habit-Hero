@@ -5,12 +5,15 @@ package ini dibuat oleh kelompok 7, sebuah aplikasi _habit tracker_ berbasis Jav
 
 ## 🎯 Fitur Utama
 
-- ✅ Tambah habit positif atau negatif
-- ✅ Tandai habit yang sudah dilakukan
-- ✅ Lihat dan hapus habit
-- ✅ Reset skor habit 
-- ✅ Perhitungan index skor kumulatif berdasarkan seberapa sering dilakukan
-- ✅ Validasi input (y/n & angka) dengan sistem try-catch
+- Tambah habit positif atau negatif
+- Tandai habit yang sudah dilakukan
+- ihat dan hapus habit
+- Reset skor habit 
+- Perhitungan index skor kumulatif berdasarkan seberapa sering dilakukan
+- Validasi input (y/n & angka) dengan sistem try-catch
+- Dua versi:
+  - CLI (Command Line Interface)
+  - GUI (Java Swing)
 
 ---
 ## Struktur Class
@@ -20,7 +23,15 @@ package ini dibuat oleh kelompok 7, sebuah aplikasi _habit tracker_ berbasis Jav
   - `markDone()`, `resetScore()`
 - **Habit** (abstract class):
   - Atribut: `name`, `jumlahDilakukan`
-  - Method: `getName()`, `getScore()` (abstract override), `getJumlahDilakukan()`, `resetScore()`, `markDone()` (abstract)
+  - Method:
+    - `getName()` – Mengembalikan nama habit
+    - `getScore()` – Method default (tidak abstract), mengembalikan 0 (di-override oleh subclass)
+    - `getJumlahDilakukan()` – Mengembalikan jumlah habit dilakukan
+    - `reset()` – Mengatur ulang `jumlahDilakukan` ke 0
+    - `markDone()` – Abstract, diimplementasi oleh subclass
+    - `getDisplayName()` – Menggabungkan nama dan jumlah dilakukan
+  - Mengimplementasikan interface `Trackable`
+
 
 ### Implementasi Class
 - **PositiveHabit**: turunan `Habit`, skor meningkat progresif (10, 15, 20,...)
@@ -56,15 +67,9 @@ Tidak membutuhkan JavaFX, cukup JDK standar (versi 8+).
 ---
 
 ## Pembagian Tugas Anggota
-
-| Nama Anggota                   | Tugas                                                                 |
-|-------------------------------|-----------------------------------------------------------------------|
-| **Anugrah Fitri Novanda**     | Membuat `HabitApp` dan `HabitHeroSwingGUI` (GUI Swing)                |
-| **Vina Sucitra**              | Membuat `Habit.java` (kelas abstrak)            |
-| **Muhammad Alif Sakti**       | Membuat `Trackable`, `PositiveHabit`, dan `NegativeHabit`             |
-| **Andi Sophie Banuna Amrie**  | Membuat `HabitManajer.java`    |
-
----
-
-
-
+| Nama Anggota                  | Tugas                                                                   |
+|-------------------------------|-------------------------------------------------------------------------|
+| **Anugrah Fitri Novanda**     | Membuat `HabitApp` dan `HabitHeroSwingGUI` (GUI Swing) serta repository |
+| **Vina Sucitra**              | Membuat `Habit.java` (kelas abstrak)                                    |
+| **Muhammad Alif Sakti**       | Membuat `Trackable`, `PositiveHabit`, dan `NegativeHabit`               |
+| **Andi Sophie Banuna Amrie**  | Membuat `HabitManajer.java`                                             |

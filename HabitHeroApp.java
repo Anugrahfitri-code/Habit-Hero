@@ -184,7 +184,7 @@ public class HabitHeroApp {
 
         resetBtn.addActionListener(e -> {
             for (Habit h : habits) {
-                h.reset();
+                h.resetScore();
             }
             refreshList();
             updateTotalSkor();
